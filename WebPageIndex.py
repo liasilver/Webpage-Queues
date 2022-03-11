@@ -1,3 +1,4 @@
+
 class AVLnode:
 
     def __init__(self, key=None, value=None):
@@ -13,19 +14,41 @@ class AVLtree:
 
     def __init__(self, file):
         f = open(file, "r")
-        self.root = AVLnode(f.readline(), 1)
-        pos = 0
-        for line in f:
-            pos += 1
-            self.put(self, pos, line)
+        contents = f.read().lower()
+        f.close()
+        punctuation = '''!()[]{};:'",<>./\?@#$%^&*_~'''
+        no_punct = " "
+        for char in contents:
+            if char not in punctuation:
+                no_punct += char
+            else:
+                no_punct += " "
+        words = no_punct.split()
+        no_duplicates = list(dict.fromkeys(words))
+        key_vals = []
+        for word in no_duplicates:
+            pos = []
+            for i in range(len(words)):
+                if words[i] == word:
+                    pos.append(i)
+            key_vals.append([word,pos])
+
+        self.root = AVLnode(key_vals[0][0], key_vals[0][1])
+        for i in range(1,len(key_vals)-1):
+            self.put(key_vals[i][0], key_vals[i][1])
+
+    def getCounts(self, s):
+        a = self.search(s, self.root)
+        if a != None:
+            return len(a.value)
+        return None
+
 
     def get(self, data):
 
         a = self.search(data, self.root)
-
-        if a != None:
+        if a != False:
             return a.value
-
         return None
 
     def search(self, data, cur_node):
@@ -41,7 +64,6 @@ class AVLtree:
             return self.search(data, cur_node.right)
 
     def put(self, data, value=None):
-        print("Add-" + str(data) + '-' + str(value))
         data = AVLnode(data, value)
         y = None
         x = self.root
@@ -107,27 +129,21 @@ class AVLtree:
         bHeight = leftH - rightH
 
         if bHeight < -1 or bHeight > 1:
-            print("the node %s is unblanced" % (node.key))
-            print("the new insert value %s" % (newInsert))
             self.directionDetector(node, bHeight, newInsert)
 
     def directionDetector(self, node, bfctor, newInsert):
 
         if bfctor > 1 and newInsert < node.left.key:
-            print("LL case")
             self.leftRoation(node)
 
         elif bfctor < -1 and newInsert > node.right.key:
-            print("RR case")
             self.rightRoation(node)
 
         elif bfctor > 1 and newInsert > node.left.key:
-            print("LR case")
             self.rightRoation(node.left)
             self.leftRoation(node)
 
         elif bfctor < -1 and newInsert < node.right.key:
-            print("RL case")
             self.leftRoation(node.right)
             self.rightRoation(node)
 
