@@ -1,0 +1,60 @@
+import WebPageIndex
+
+def init_(query, pages, self = []):
+
+    #pages = [tree, tree2, tree3 etc.]
+    prioities =[]
+
+    for p in pages:
+
+        #if query is more than one word
+        if query.find(" ") != -1:
+            space_query = query.split()
+            total_word_count = 0
+            for q in space_query:
+                try:
+                    total_word_count += len(p.get(q))
+                except TypeError:
+                    total_word_count += 0
+            page_priority = [p, total_word_count]
+        else:
+            occurences = p.get(query)
+            page_priority = [p, len(occurences)]
+        prioities.append(page_priority)
+
+    for i in range(len(prioities)):
+        min = i
+        for j in range(i+1,len(prioities)):
+            if prioities[min][1] < prioities[j][1]:
+                min = j
+        prioities[i][1], prioities[min][1] = prioities[min][1], prioities[i][1]
+    print(prioities)
+
+    #priorities = [[tree, priotity],[tree2, priotity2]]
+    for i in range(len(prioities)):
+        self.append(prioities[i][0])
+    return self
+
+def len_(self):
+    return len(self)
+
+def add(self, key, value):
+    newest = self. Item(key, value) # make new item instance
+    walk = self._data.last( ) # walk backward looking for smaller key
+    while walk is not None and newest < walk.element( ):
+        walk = self._data.before(walk)
+    if walk is None:
+        self._data.add_first(newest) # new key is smallest
+    else:
+        self._data.add_after(walk, newest) # newest goes after walk
+
+def peek(self):
+    if len_(self) == 0:
+        print("Priority queue is empty.")
+    return (self[0])
+
+def remove_min(self):
+    if self.is_empty( ):
+        print("Priority queue is empty.")
+    item = self. data.delete(self. data.first( ))
+    return (item. key, item. value)
